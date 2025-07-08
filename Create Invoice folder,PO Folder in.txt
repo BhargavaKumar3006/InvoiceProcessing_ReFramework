@@ -1,0 +1,9 @@
+Create Invoice folder,PO Folder in Input folder. Place invoice files invoice folder. Place po files in po folder
+Prepare new excel file name as input fiel. column name as filepath. provide filename along with path
+prepare config file.Name: input excel Value : Data\Input\Input.xlsx
+
+Initialization State: 
+
+1.  
+2. 
+

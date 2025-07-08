@@ -1,6 +1,8 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Process" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Process" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://schemas.uipath.com/workflow/activities/intelligentocr" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uisad="clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DataExtraction;assembly=UiPath.IntelligentOCR.StudioWeb.Activities" xmlns:uisad1="clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.DocumentClassification;assembly=UiPath.IntelligentOCR.StudioWeb.Activities" xmlns:uisascb="clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.SWEntities.CustomGptDocumentType8577Ca0D0E0D4C1D9A24F562D54D4653.Bundle;assembly=CustomGptDocumentTyp.zM5ai1CrvUR1PMcWk2PMSMO1" xmlns:uisascb1="clr-namespace:UiPath.IntelligentOCR.StudioWeb.Activities.SWEntities.CustomGptDocumentTypeC754B94A068B4E449Ffb059B0E8B4718.Bundle;assembly=CustomGptDocumentTyp.xAK7J4YpTFO1k9ta9td9n24" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
-    <x:Property sap2010:Annotation.AnnotationText="Transaction item to be processed." Name="in_TransactionItem" Type="InArgument(ui:QueueItem)" />
+    <x:Property Name="io_out_poresult" Type="InOutArgument(sd:DataTable)" />
+    <x:Property Name="io_out_dtResult" Type="InOutArgument(sd:DataTable)" />
+    <x:Property sap2010:Annotation.AnnotationText="Transaction item to be processed." Name="in_TransactionItem" Type="InArgument(sd:DataRow)" />
     <x:Property sap2010:Annotation.AnnotationText="Dictionary structure to store configuration data of the process (settings, constants and assets)." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
   </x:Members>
   <VisualBasic.Settings>
@@ -37,10 +39,31 @@
       <x:String>UiPath.Core.Activities</x:String>
       <x:String>GlobalVariablesNamespace</x:String>
       <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>System.Reflection</x:String>
+      <x:String>System.Linq.Expressions</x:String>
+      <x:String>UiPath.Platform.ResourceHandling</x:String>
+      <x:String>UiPath.IntelligentOCR.StudioWeb.Activities.DocumentClassification</x:String>
+      <x:String>UiPath.DocumentProcessing.Contracts.Dom</x:String>
+      <x:String>UiPath.DocumentProcessing.Contracts.Classification</x:String>
+      <x:String>UiPath.IntelligentOCR.StudioWeb.Activities</x:String>
+      <x:String>UiPath.DocumentProcessing.Contracts</x:String>
+      <x:String>UiPath.Platform</x:String>
+      <x:String>UiPath.IntelligentOCR.StudioWeb.Activities.DataExtraction</x:String>
+      <x:String>UiPath.DocumentProcessing.Contracts.DataExtraction</x:String>
+      <x:String>UiPath.DocumentProcessing.Contracts.Results</x:String>
+      <x:String>System.Xml.Serialization</x:String>
+      <x:String>UiPath.IntelligentOCR.StudioWeb.Activities.SWEntities.CustomGptDocumentType190Fad87Cefa45068Cd01F794E272C05.Bundle</x:String>
+      <x:String>System.ComponentModel</x:String>
+      <x:String>UiPath.IntelligentOCR.StudioWeb.Activities.SWEntities.CustomGptDocumentType817Ef610Ca8C4Ea0Ae862E8D9F5D9A8D.Bundle</x:String>
+      <x:String>UiPath.IntelligentOCR.StudioWeb.Activities.SWEntities.CustomGptDocumentType8577Ca0D0E0D4C1D9A24F562D54D4653.Bundle</x:String>
+      <x:String>System.Globalization</x:String>
+      <x:String>UiPath.IntelligentOCR.StudioWeb.Activities.SWEntities.CustomGptDocumentType4Fc52F4FF7Dd49D28E0E19293C426A8B.Bundle</x:String>
+      <x:String>UiPath.IntelligentOCR.StudioWeb.Activities.SWEntities.CustomGptDocumentType8Cd588A3D16F420DA879F53Caef9288E.Bundle</x:String>
+      <x:String>UiPath.IntelligentOCR.StudioWeb.Activities.SWEntities.CustomGptDocumentTypeC754B94A068B4E449Ffb059B0E8B4718.Bundle</x:String>
     </scg:List>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
-    <scg:List x:TypeArguments="AssemblyReference" Capacity="40">
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="80">
       <AssemblyReference>Microsoft.Bcl.AsyncInterfaces</AssemblyReference>
       <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
       <AssemblyReference>mscorlib</AssemblyReference>
@@ -78,16 +101,291 @@
       <AssemblyReference>UiPath.UIAutomationCore</AssemblyReference>
       <AssemblyReference>UiPath.Workflow</AssemblyReference>
       <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>UiPath.Studio.Constants</AssemblyReference>
+      <AssemblyReference>System.Reflection.DispatchProxy</AssemblyReference>
+      <AssemblyReference>System.Reflection.TypeExtensions</AssemblyReference>
+      <AssemblyReference>System.Reflection.Metadata</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities.Design</AssemblyReference>
+      <AssemblyReference>System.Private.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.Private.DataContractSerialization</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Formatters</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
+      <AssemblyReference>NPOI.Core</AssemblyReference>
+      <AssemblyReference>System.Collections.NonGeneric</AssemblyReference>
+      <AssemblyReference>System.Linq.Expressions</AssemblyReference>
+      <AssemblyReference>System.Data.SqlClient</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.IO.FileSystem.Watcher</AssemblyReference>
+      <AssemblyReference>System.IO.Packaging</AssemblyReference>
+      <AssemblyReference>System.IO.FileSystem.AccessControl</AssemblyReference>
+      <AssemblyReference>System.IO.FileSystem.DriveInfo</AssemblyReference>
+      <AssemblyReference>UiPath.Platform</AssemblyReference>
+      <AssemblyReference>UiPath.IntelligentOCR.StudioWeb.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.DocumentProcessing.Contracts</AssemblyReference>
+      <AssemblyReference>UiPath.CodedWorkflows</AssemblyReference>
+      <AssemblyReference>System.Private.Xml</AssemblyReference>
+      <AssemblyReference>CustomGptDocumentTyp.tnuvz3PFPGJ1SDjHM2VS3AA</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.EventBasedAsync</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.Primitives</AssemblyReference>
+      <AssemblyReference>CustomGptDocumentTyp.TYnCHejM9B1sXHBT2r0YAI</AssemblyReference>
+      <AssemblyReference>CustomGptDocumentTyp.zM5ai1CrvUR1PMcWk2PMSMO1</AssemblyReference>
+      <AssemblyReference>CustomGptDocumentTyp.mzGHg1ZDWKO1IyDy34ErxHA2</AssemblyReference>
+      <AssemblyReference>CustomGptDocumentTyp.c9bzz1rASeK1UHnw8fTQbi3</AssemblyReference>
+      <AssemblyReference>CustomGptDocumentTyp.xAK7J4YpTFO1k9ta9td9n24</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="Invoke major steps of the business process, which are usually implemented by multiple subworkflows.&#xA;&#xA;If a BusinessRuleException is thrown, the transaction is skipped. &#xA;If another kind of exception occurs, the current transaction can be retried. " DisplayName="Process" sap:VirtualizedContainerService.HintSize="375.2,389.6" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="Invoke major steps of the business process, which are usually implemented by multiple subworkflows.&#xA;&#xA;If a BusinessRuleException is thrown, the transaction is skipped. &#xA;If another kind of exception occurs, the current transaction can be retried. " DisplayName="Process" sap:VirtualizedContainerService.HintSize="1146,4077" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="FileName" />
+      <Variable x:TypeArguments="x:String" Name="FilePath" />
+      <Variable x:TypeArguments="uisad1:DocumentData" Name="documentData">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:String x:Key="SourceIdRef">ClassifyDocument_1</x:String>
+            <x:String x:Key="SourcePropertyName">ClassificationResults</x:String>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </Variable>
+      <Variable x:TypeArguments="uisad:IDocumentData(uisascb:CustomGptDocumentType8577Ca0D0E0D4C1D9A24F562D54D4653)" Name="ExtractionResult" />
+    </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
         <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <ui:LogMessage DisplayName="Log Message Process Start" sap:VirtualizedContainerService.HintSize="333.6,92.8" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Started Process&quot;]" />
-    <ui:Comment DisplayName="Comment (placeholder)" sap:VirtualizedContainerService.HintSize="333.6,56" sap2010:WorkflowViewState.IdRef="Comment_1" Text="//  Invoke steps of the process" />
+    <Assign sap:VirtualizedContainerService.HintSize="504,114" sap2010:WorkflowViewState.IdRef="Assign_1">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[FilePath]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[in_TransactionItem("FilePath").ToString]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign sap:VirtualizedContainerService.HintSize="504,114" sap2010:WorkflowViewState.IdRef="Assign_2">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[FileName]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[System.io.Path.GetFileName(FilePath)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:Comment DisplayName="Comment (placeholder)" sap:VirtualizedContainerService.HintSize="504,88" sap2010:WorkflowViewState.IdRef="Comment_1" Text="//  Invoke steps of the process" />
+    <p:ClassifyDocument ApiKey="{x:Null}" ClassifierResult="{x:Null}" DocumentObjectModel="{x:Null}" DocumentPath="{x:Null}" DocumentText="{x:Null}" DocumentTypes="{x:Null}" PersistenceId="{x:Null}" PredictionId="{x:Null}" ProjectTag="{x:Null}" ProjectVersionNumber="{x:Null}" Prompt="{x:Null}" ClassificationResults="[documentData]" ClassifierId="generative_classifier" DisplayName="Classify Document" Endpoint="https://cloud.uipath.com/c9aea3c4-4c66-4dde-b8f5-b33ea1c180b1/26c096f4-855e-4506-a53e-7c5cb4bf0026/du_/api/framework/projects/00000000-0000-0000-0000-000000000001/classifiers/generative_classifier/classification/start?api-version=1.1" FileInput="[LocalResource.FromPath(FilePath.ToString)]" sap:VirtualizedContainerService.HintSize="504,274" sap2010:WorkflowViewState.IdRef="ClassifyDocument_1" MinimumConfidence="50" ProjectId="00000000-0000-0000-0000-000000000001" TimeoutInSeconds="3600">
+      <p:ClassifyDocument.GptPromptWithVariables>
+        <InArgument x:TypeArguments="x:String" x:Key="Invoice">This document is invoice</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="PurchaseOrder">Is this document is PurchaseOrder</InArgument>
+      </p:ClassifyDocument.GptPromptWithVariables>
+      <p:ClassifyDocument.RuntimeAssetPath>
+        <InArgument x:TypeArguments="x:String">
+          <Literal x:TypeArguments="x:String" Value="" />
+        </InArgument>
+      </p:ClassifyDocument.RuntimeAssetPath>
+      <p:ClassifyDocument.RuntimeTenantUrl>
+        <InArgument x:TypeArguments="x:String">
+          <Literal x:TypeArguments="x:String" Value="" />
+        </InArgument>
+      </p:ClassifyDocument.RuntimeTenantUrl>
+    </p:ClassifyDocument>
+    <Switch x:TypeArguments="x:String" DisplayName="Switch" Expression="[documentData.DocumentType.Name]" sap:VirtualizedContainerService.HintSize="504,3392" sap2010:WorkflowViewState.IdRef="Switch`1_1">
+      <Switch.Default>
+        <Sequence DisplayName="Default" sap:VirtualizedContainerService.HintSize="502,89" sap2010:WorkflowViewState.IdRef="Sequence_5">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+        </Sequence>
+      </Switch.Default>
+      <Sequence x:Key="Invoice" DisplayName="Body" sap:VirtualizedContainerService.HintSize="502,1886" sap2010:WorkflowViewState.IdRef="Sequence_6">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+        <ui:LogMessage DisplayName="Log Message Process Start" sap:VirtualizedContainerService.HintSize="468,173" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Trace" Message="[&quot;Working Doc Name :&quot;+documentData.DocumentType.Name]" />
+        <p:ExtractDocumentDataWithDocumentData x:TypeArguments="uisascb:CustomGptDocumentType8577Ca0D0E0D4C1D9A24F562D54D4653" DocumentBounds="{x:Null}" DocumentObjectModel="{x:Null}" DocumentPath="{x:Null}" DocumentText="{x:Null}" ExtractorDocumentType="{x:Null}" ExtractorResult="{x:Null}" ModernDocumentTypeId="{x:Null}" PersistenceId="{x:Null}" PredictionId="{x:Null}" ProjectVersionNumber="{x:Null}" Prompt="{x:Null}" ApplyAutoValidation="False" DisplayName="Extract Document Data" DocType="generative_extractor" ExtractionResults="[ExtractionResult]" FileInput="[LocalResource.FromPath(FilePath.ToString)]" GenerateData="True" sap:VirtualizedContainerService.HintSize="468,274" sap2010:WorkflowViewState.IdRef="ExtractDocumentDataWithDocumentData`1_1" ProjectId="00000000-0000-0000-0000-000000000001" TimeoutInSeconds="3600">
+          <p:ExtractDocumentDataWithDocumentData.AutoValidationConfidenceThreshold>
+            <InArgument x:TypeArguments="s:Nullable(x:Int32)">
+              <Literal x:TypeArguments="s:Nullable(x:Int32)" Value="0" />
+            </InArgument>
+          </p:ExtractDocumentDataWithDocumentData.AutoValidationConfidenceThreshold>
+          <p:ExtractDocumentDataWithDocumentData.GptPromptWithVariables>
+            <InArgument x:TypeArguments="x:String" x:Key="InvoiceNo">Find the Invoice No or Inoiver Number</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="InvoiceDate">Find the date of invoice</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="VendorName">find the name of vendor</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="Total Amount">Find the bill of amount or Total Amount or Amount or Gross Value</InArgument>
+          </p:ExtractDocumentDataWithDocumentData.GptPromptWithVariables>
+          <p:ExtractDocumentDataWithDocumentData.ProjectTag>
+            <InArgument x:TypeArguments="x:String">
+              <Literal x:TypeArguments="x:String" Value="" />
+            </InArgument>
+          </p:ExtractDocumentDataWithDocumentData.ProjectTag>
+          <p:ExtractDocumentDataWithDocumentData.RuntimeAssetPath>
+            <InArgument x:TypeArguments="x:String">
+              <Literal x:TypeArguments="x:String" Value="" />
+            </InArgument>
+          </p:ExtractDocumentDataWithDocumentData.RuntimeAssetPath>
+          <p:ExtractDocumentDataWithDocumentData.RuntimeTenantUrl>
+            <InArgument x:TypeArguments="x:String">
+              <Literal x:TypeArguments="x:String" Value="" />
+            </InArgument>
+          </p:ExtractDocumentDataWithDocumentData.RuntimeTenantUrl>
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+        </p:ExtractDocumentDataWithDocumentData>
+        <Sequence DisplayName="Invoice Assign Values" sap:VirtualizedContainerService.HintSize="468,1379" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <Sequence.Variables>
+            <Variable x:TypeArguments="x:String" Name="InvoiceNo" />
+            <Variable x:TypeArguments="x:String" Name="InvoiceDate" />
+            <Variable x:TypeArguments="x:String" Name="VendorName" />
+            <Variable x:TypeArguments="x:String" Name="TotalAmount" />
+            <Variable x:TypeArguments="x:String" Name="CovertDate" />
+          </Sequence.Variables>
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <Assign sap:VirtualizedContainerService.HintSize="434,114" sap2010:WorkflowViewState.IdRef="Assign_3">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[InvoiceNo]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[ExtractionResult.Data.InvoiceNo.Value]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <Assign sap:VirtualizedContainerService.HintSize="434,114" sap2010:WorkflowViewState.IdRef="Assign_4">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[InvoiceDate]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[ExtractionResult.Data.InvoiceDate.Value.Trim]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <Assign sap:VirtualizedContainerService.HintSize="434,114" sap2010:WorkflowViewState.IdRef="Assign_5">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[VendorName]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[ExtractionResult.Data.VendorName.Value]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <Assign sap:VirtualizedContainerService.HintSize="434,114" sap2010:WorkflowViewState.IdRef="Assign_6">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[TotalAmount]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[ExtractionResult.Data.TotalAmount.Value]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <If Condition="[TotalAmount=&quot;&quot;]" sap:VirtualizedContainerService.HintSize="434,676" sap2010:WorkflowViewState.IdRef="If_1">
+            <If.Then>
+              <Sequence DisplayName="Then" sap:VirtualizedContainerService.HintSize="416,269" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                <sap:WorkflowViewStateService.ViewState>
+                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                  </scg:Dictionary>
+                </sap:WorkflowViewStateService.ViewState>
+                <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{InvoiceNo, InvoiceDate, VendorName, &quot;NA&quot;}]" DataTable="[io_out_dtResult]" DisplayName="Add Data Row" sap:VirtualizedContainerService.HintSize="382,209" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
+              </Sequence>
+            </If.Then>
+            <If.Else>
+              <Sequence DisplayName="Else" sap:VirtualizedContainerService.HintSize="416,269" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                <sap:WorkflowViewStateService.ViewState>
+                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                  </scg:Dictionary>
+                </sap:WorkflowViewStateService.ViewState>
+                <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{InvoiceNo, InvoiceDate, VendorName, TotalAmount}]" DataTable="[io_out_dtResult]" DisplayName="Add Data Row" sap:VirtualizedContainerService.HintSize="382,209" sap2010:WorkflowViewState.IdRef="AddDataRow_2" />
+              </Sequence>
+            </If.Else>
+          </If>
+          <ui:LogMessage DisplayName="Log Message Process Start" sap:VirtualizedContainerService.HintSize="434,164" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[Environment.NewLine &amp; &quot;Invoice No: &quot; &amp; InvoiceNo &amp; Environment.NewLine &amp; &quot;Invoice Date: &quot; &amp; InvoiceDate &amp; Environment.NewLine &amp; &quot;Vendor Name: &quot; &amp; VendorName &amp; Environment.NewLine &amp; &quot;Total Amount: &quot; &amp; TotalAmount]" />
+        </Sequence>
+      </Sequence>
+      <Sequence x:Key="PurchaseOrder" DisplayName="Body" sap:VirtualizedContainerService.HintSize="502,1172" sap2010:WorkflowViewState.IdRef="Sequence_7">
+        <Sequence.Variables>
+          <Variable x:TypeArguments="x:String" Name="PoVendorName" />
+          <Variable x:TypeArguments="x:String" Name="PoDate" />
+          <Variable x:TypeArguments="x:String" Name="PoTotalValue" />
+          <Variable x:TypeArguments="uisad:IDocumentData(uisascb1:CustomGptDocumentTypeC754B94A068B4E449Ffb059B0E8B4718)" Name="Po_ExtractResult" />
+          <Variable x:TypeArguments="x:String" Name="PoNo" />
+        </Sequence.Variables>
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+        <p:ExtractDocumentDataWithDocumentData x:TypeArguments="uisascb1:CustomGptDocumentTypeC754B94A068B4E449Ffb059B0E8B4718" DocumentBounds="{x:Null}" DocumentObjectModel="{x:Null}" DocumentPath="{x:Null}" DocumentText="{x:Null}" ExtractorDocumentType="{x:Null}" ExtractorResult="{x:Null}" ModernDocumentTypeId="{x:Null}" PersistenceId="{x:Null}" PredictionId="{x:Null}" ProjectVersionNumber="{x:Null}" Prompt="{x:Null}" ApplyAutoValidation="False" DisplayName="Extract Document Data" DocType="generative_extractor" ExtractionResults="[Po_ExtractResult]" FileInput="[LocalResource.FromPath(FilePath.ToString)]" GenerateData="True" sap:VirtualizedContainerService.HintSize="468,274" sap2010:WorkflowViewState.IdRef="ExtractDocumentDataWithDocumentData`1_2" ProjectId="00000000-0000-0000-0000-000000000001" TimeoutInSeconds="3600">
+          <p:ExtractDocumentDataWithDocumentData.AutoValidationConfidenceThreshold>
+            <InArgument x:TypeArguments="s:Nullable(x:Int32)">
+              <Literal x:TypeArguments="s:Nullable(x:Int32)" Value="0" />
+            </InArgument>
+          </p:ExtractDocumentDataWithDocumentData.AutoValidationConfidenceThreshold>
+          <p:ExtractDocumentDataWithDocumentData.GptPromptWithVariables>
+            <InArgument x:TypeArguments="x:String" x:Key="PoNumber">Find PO No or Po Number or P.O. NUMBER</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="VendorName">Name of the vendor</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="PoDate">Date of PO</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="PoAmount">Total Amount or Total or Gross</InArgument>
+          </p:ExtractDocumentDataWithDocumentData.GptPromptWithVariables>
+          <p:ExtractDocumentDataWithDocumentData.ProjectTag>
+            <InArgument x:TypeArguments="x:String">
+              <Literal x:TypeArguments="x:String" Value="" />
+            </InArgument>
+          </p:ExtractDocumentDataWithDocumentData.ProjectTag>
+          <p:ExtractDocumentDataWithDocumentData.RuntimeAssetPath>
+            <InArgument x:TypeArguments="x:String">
+              <Literal x:TypeArguments="x:String" Value="" />
+            </InArgument>
+          </p:ExtractDocumentDataWithDocumentData.RuntimeAssetPath>
+          <p:ExtractDocumentDataWithDocumentData.RuntimeTenantUrl>
+            <InArgument x:TypeArguments="x:String">
+              <Literal x:TypeArguments="x:String" Value="" />
+            </InArgument>
+          </p:ExtractDocumentDataWithDocumentData.RuntimeTenantUrl>
+        </p:ExtractDocumentDataWithDocumentData>
+        <Assign sap:VirtualizedContainerService.HintSize="468,114" sap2010:WorkflowViewState.IdRef="Assign_8">
+          <Assign.To>
+            <OutArgument x:TypeArguments="x:String">[PoNo]</OutArgument>
+          </Assign.To>
+          <Assign.Value>
+            <InArgument x:TypeArguments="x:String">[Po_ExtractResult.Data.PoNumber.Value]</InArgument>
+          </Assign.Value>
+        </Assign>
+        <Assign sap:VirtualizedContainerService.HintSize="468,114" sap2010:WorkflowViewState.IdRef="Assign_10">
+          <Assign.To>
+            <OutArgument x:TypeArguments="x:String">[PoVendorName]</OutArgument>
+          </Assign.To>
+          <Assign.Value>
+            <InArgument x:TypeArguments="x:String">[Po_ExtractResult.Data.VendorName.Value]</InArgument>
+          </Assign.Value>
+        </Assign>
+        <Assign sap:VirtualizedContainerService.HintSize="468,114" sap2010:WorkflowViewState.IdRef="Assign_11">
+          <Assign.To>
+            <OutArgument x:TypeArguments="x:String">[PoDate]</OutArgument>
+          </Assign.To>
+          <Assign.Value>
+            <InArgument x:TypeArguments="x:String">[Po_ExtractResult.Data.PoDate.Value]</InArgument>
+          </Assign.Value>
+        </Assign>
+        <Assign sap:VirtualizedContainerService.HintSize="468,114" sap2010:WorkflowViewState.IdRef="Assign_9">
+          <Assign.To>
+            <OutArgument x:TypeArguments="x:String">[PoTotalValue]</OutArgument>
+          </Assign.To>
+          <Assign.Value>
+            <InArgument x:TypeArguments="x:String">[Po_ExtractResult.Data.PoAmount.Value]</InArgument>
+          </Assign.Value>
+        </Assign>
+        <ui:LogMessage DisplayName="Log Message Process Start" sap:VirtualizedContainerService.HintSize="468,173" sap2010:WorkflowViewState.IdRef="LogMessage_7" Level="Info" Message="[Environment.NewLine &amp; &quot;Po No: &quot; &amp; PoNo &amp; Environment.NewLine &amp; &quot;Po Date: &quot; &amp; PoDate &amp; Environment.NewLine &amp; &quot;Vendor Name: &quot; &amp; PoVendorName &amp; Environment.NewLine &amp; &quot;Total Amount: &quot; &amp; PoTotalValue]" />
+        <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{PoNo, PoVendorName, PoDate, PoTotalValue}]" DataTable="[io_out_poresult]" DisplayName="Add Data Row" sap:VirtualizedContainerService.HintSize="468,209" sap2010:WorkflowViewState.IdRef="AddDataRow_3" />
+      </Sequence>
+    </Switch>
   </Sequence>
 </Activity>
